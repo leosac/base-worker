@@ -6,9 +6,9 @@ namespace Leosac.CredentialProvisioning.Worker
 {
     public abstract class WorkerBase<T>
     {
-        static readonly ILog logger = LogManager.GetLogger(typeof(WorkerBase<T>));
+        protected static readonly ILog logger = LogManager.GetLogger(typeof(WorkerBase<T>));
 
-        IList<TemplateContainer<T>> _templates = new List<TemplateContainer<T>>();
+        protected readonly IList<TemplateContainer<T>> _templates = new List<TemplateContainer<T>>();
 
         public WorkerBase()
         {
@@ -56,7 +56,7 @@ namespace Leosac.CredentialProvisioning.Worker
                     return tpl.Content;
             }
 
-            return default(T);
+            return default;
         }
 
         public string[] GetTemplates()
@@ -90,7 +90,9 @@ namespace Leosac.CredentialProvisioning.Worker
         {
             var item = Queue.Get(itemId);
             if (item == null)
+            {
                 return null;
+            }
             
             var process = InitializeProcess(item.TemplateId, item.Credential);
             process.CredentialCompleted += (sender, e) =>
@@ -100,8 +102,7 @@ namespace Leosac.CredentialProvisioning.Worker
                     if (e != null)
                     {
                         // Be sure the data on item queue is up to date (worker implementation could have worked on copies)
-                        var data = item.Credential.Data as IDictionary<string, object>;
-                        if (data != null)
+                        if (item.Credential.Data is IDictionary<string, object> data)
                         {
                             foreach (var key in e.Keys)
                             {
