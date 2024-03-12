@@ -1,13 +1,10 @@
 ﻿using Leosac.CredentialProvisioning.Core.Contexts;
 using Leosac.CredentialProvisioning.Core.Models;
-using log4net;
 
 namespace Leosac.CredentialProvisioning.Worker
 {
     public abstract class WorkerBase<T>
     {
-        protected static readonly ILog logger = LogManager.GetLogger(typeof(WorkerBase<T>));
-
         protected readonly IList<TemplateContainer<T>> _templates = new List<TemplateContainer<T>>();
 
         public WorkerBase()
