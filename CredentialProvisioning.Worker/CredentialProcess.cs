@@ -32,5 +32,27 @@ namespace Leosac.CredentialProvisioning.Worker
                 await ProcessCompleted(this, state);
             }
         }
+
+        protected static Dictionary<string, object>? GetFieldChanges(WorkerCredentialContext ctx)
+        {
+            if (ctx.Credential == null || ctx.FieldsChanged == null)
+                return null;
+
+            var changes = new Dictionary<string, object>();
+#pragma warning disable IDE0019 // Use pattern matching
+            var fields = ctx.Credential?.Data as IDictionary<string, object>;
+#pragma warning restore IDE0019 // Use pattern matching
+            if (fields != null)
+            {
+                foreach (var fieldName in ctx.FieldsChanged)
+                {
+                    if (fields.TryGetValue(fieldName, out object? value))
+                    {
+                        changes.Add(fieldName, value);
+                    }
+                }
+            }
+            return changes;
+        }
     }
 }
