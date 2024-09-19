@@ -45,7 +45,11 @@ namespace Leosac.CredentialProvisioning.Worker
                 {
                     if (fieldValue is byte[] bv)
                     {
+#if NET48
+                        fieldValue = Core.ConvertBackport.ToHexString(bv);
+#else
                         fieldValue = Convert.ToHexString(bv);
+#endif
                     }
 
                     if (value?.ToString() != fieldValue.ToString())
@@ -109,7 +113,11 @@ namespace Leosac.CredentialProvisioning.Worker
                 }
                 else
                 {
+#if NET48
+                    ret = Core.ConvertBackport.FromHexString(v.ToString()!);
+#else
                     ret = Convert.FromHexString(v.ToString()!);
+#endif
                 }
             }
             return ret;
