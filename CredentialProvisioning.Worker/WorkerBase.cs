@@ -114,11 +114,21 @@ namespace Leosac.CredentialProvisioning.Worker
             };
             process.ProcessCompleted += (sender, e) =>
             {
+                if (e == ProvisioningState.Completed)
+                {
+                    item.CompletionToken = GenerateCompletionToken(item.Credential.Data as IDictionary<string, object>);
+                }
+
                 return Task.Run(() => {
                     Queue.ScheduleRemove(itemId);
                 });
             };
             return process;
+        }
+
+        protected virtual string? GenerateCompletionToken(IDictionary<string, object> data)
+        {
+            return null;
         }
     }
 }
