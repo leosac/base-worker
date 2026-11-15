@@ -10,12 +10,12 @@ namespace Leosac.CredentialProvisioning.Worker
         {
         }
 
-        public string Add(string templateId, WorkerCredentialBase credential)
+        public string Add(string templateId, WorkerCredentialBase credential, string? variantCode = null)
         {
             var itemId = Guid.NewGuid().ToString();
             lock (_items)
             {
-                _items.Add(itemId, new WorkerQueueItem() { TemplateId = templateId, Credential = credential});
+                _items.Add(itemId, new WorkerQueueItem() { TemplateId = templateId, Credential = credential, VariantCode = variantCode});
             }
             return itemId;
         }

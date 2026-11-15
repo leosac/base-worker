@@ -10,6 +10,11 @@ namespace Leosac.CredentialProvisioning.Worker
         public string TemplateId { get; set; }
 
         /// <summary>
+        /// The optional associated Variant Code of the Template.
+        /// </summary>
+        public string? VariantCode { get; set; }
+
+        /// <summary>
         /// The credential details.
         /// </summary>
         public WorkerCredentialBase Credential { get; set; }
