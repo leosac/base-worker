@@ -44,6 +44,27 @@ namespace Leosac.CredentialProvisioning.Worker
             }
         }
 
+        public void LoadTemplateVariant(string templateId, string variantCode, CredentialFragmentTemplateParameter[]? parameters)
+        {
+            lock (_templates)
+            {
+                var tpl = _templates.Where(t => t.Id == templateId).FirstOrDefault();
+                if (tpl == null)
+                    throw new InvalidOperationException($"Cannot load variant for template {templateId} because the template is not loaded");
+
+                var oldVariant = tpl.Variants.FirstOrDefault(v => v.Code == variantCode);
+                if (oldVariant != null)
+                {
+                    tpl.Variants.Remove(oldVariant);
+                }
+                tpl.Variants.Add(new TemplateVariant()
+                {
+                    Code = variantCode,
+                    Parameters = parameters
+                });
+            }
+        }
+
         public T? GetTemplate(string templateId, long? revision = null)
         {
             var tpl = _templates.Where(t => t.Id == templateId).FirstOrDefault();
@@ -54,6 +75,16 @@ namespace Leosac.CredentialProvisioning.Worker
             }
 
             return default;
+        }
+
+        public CredentialFragmentTemplateParameter[]? GetTemplateVariantParameters(string templateId, string variantCode)
+        {
+            var tpl = _templates.FirstOrDefault(t => t.Id == templateId);
+            if (tpl != null)
+            {
+                return tpl.Variants?.Where(v => v.Code == variantCode).Select(v => v.Parameters).FirstOrDefault();
+            }
+            return null;
         }
 
         public string[] GetTemplates()
